@@ -18,7 +18,9 @@ cnx=st.connection("snowflake")
 session= cnx.session()
 
 my_dataframe = session.table("zenas_athleisure_db.products.upsell_mapping").select(col('sweatsuit_color_or_style'))
-ingredients_list = st.multiselect(my_dataframe)
+ingredients_list = st.multiselect('Pick a sweatsuit color or style'
+    ,my_dataframe
+    ,max_selections=1)
 st.dataframe(data=my_dataframe, use_container_width=True)
 st.stop()
 
