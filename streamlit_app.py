@@ -7,6 +7,8 @@ st.title("Zena's Amazing Athleisure Catalog")
 
 session = get_active_session()
 
+st.stop()
+
 # get a list of colors for a drop list selection
 table_colors = session.sql("select color_or_style from catalog_for_website")
 pd_colors = table_colors.to_pandas()
