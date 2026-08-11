@@ -18,27 +18,29 @@ cnx=st.connection("snowflake")
 session= cnx.session()
 
 my_dataframe = session.table("zenas_athleisure_db.products.catalog_for_website").select(col('COLOR_OR_STYLE'),col('price'), col('file_name'), col('file_url'), col('size_list'), col('upsell_product_desc'))
-ingredients_list = st.multiselect('Pick a sweatsuit color or style'
+zenas_list = st.multiselect('Pick a sweatsuit color or style'
     ,my_dataframe
     ,max_selections=1
 )
-st.dataframe(data=my_dataframe, use_container_width=True)
-st.stop()
+#st.dataframe(data=my_dataframe, use_container_width=True)
+#st.stop()
 
 pd_df=my_dataframe.to_pandas()
 st.dataframe(pd_df)
 
 ingredients_string=''
 
-if ingredients_list:
+if zenas_list:
   
-  for fruit_chosen in ingredients_list:
-    ingredients_string += fruit_chosen + ' '
+  for color_or_size in zenas_list:
+    #ingredients_string += color_or_size + ' '
 
-    search_on=pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
-    st.write('The search value for ', fruit_chosen,' is ', search_on, '.')
+    search_on=pd_df.loc[pd_df['COLOR_OR_STYLE'] == color_or_size, 'SEARCH_ON'].iloc[0]
+    st.write('The search value for ', color_or_size,' is ', search_on, '.')
+
+    st.stop()
     
-    st.subheader(fruit_chosen+'Nutri()tion information')
+    st.subheader(color_or_size+'Information')
     smoothiefroot_response = requests.get(f"https://www.smoothiefroot.com/api/fruit/{search_on}")
     sf_df=st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
 
