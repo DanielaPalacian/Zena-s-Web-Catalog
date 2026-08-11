@@ -17,7 +17,7 @@ st.title(f" Zena's Amazing Athleisure Catalog ")
 cnx=st.connection("snowflake")
 session= cnx.session()
 
-my_dataframe = session.table("zenas_athleisure_db.products.catalog_for_website").select(col('sweatsuit_color_or_style'))
+my_dataframe = session.table("zenas_athleisure_db.products.catalog_for_website").select(col('COLOR_OR_STYLE'))
 ingredients_list = st.multiselect('Pick a sweatsuit color or style'
     ,my_dataframe
     ,max_selections=1)
