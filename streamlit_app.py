@@ -21,7 +21,7 @@ my_dataframe = session.table("zenas_athleisure_db.products.catalog_for_website")
 ingredients_list = st.multiselect('Pick a sweatsuit color or style'
     ,my_dataframe
     ,max_selections=1)
-# st.dataframe(data=my_dataframe, use_container_width=True)
+st.dataframe(data=my_dataframe, use_container_width=True)
 st.stop()
 
 pd_df=my_dataframe.to_pandas()
