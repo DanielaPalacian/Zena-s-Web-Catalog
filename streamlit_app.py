@@ -1,4 +1,4 @@
-#SiS Custom smoothie order form Streamlit app
+#SiS Zena's Web Catalog Prototype
 #Import python packages
 
 import streamlit as st 
@@ -7,25 +7,20 @@ import requests
 from snowflake.snowpark.functions import col
 
 # Write directly to the app
-st.title(f" :cup_with_straw: Customize your smoothie! :cup_with_straw: ")
+st.title(f" Zena's Amazing Athleisure Catalog ")
 st.write(
-  """Choose the fruits you want in your Smoothie!
+  """Pick a sweatsuit color or style
   """
 )
 
-title = st.text_input('Ordered by:','Dana')
-st.write('This order is made by ', title)
 
 cnx=st.connection("snowflake")
 session= cnx.session()
 
-my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'),col('SEARCH_ON'))
-ingredients_list = st.multiselect(
-    'Choose up to 5 incredients'
-    ,my_dataframe
-    ,max_selections=5
-)
-#st.dataframe(data=my_dataframe, use_container_width=True)
+my_dataframe = session.table("zenas_athleisure_db.products.upsell_mapping").select(col('sweatsuit_color_or_style'))
+ingredients_list = st.multiselect()
+st.dataframe(data=my_dataframe, use_container_width=True)
+st.stop()
 
 pd_df=my_dataframe.to_pandas()
 st.dataframe(pd_df)
