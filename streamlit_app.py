@@ -5,9 +5,9 @@ import pandas as pd
 
 st.title("Zena's Amazing Athleisure Catalog")
 
-session = get_active_session()
-
 st.stop()
+
+session = get_active_session()
 
 # get a list of colors for a drop list selection
 table_colors = session.sql("select color_or_style from catalog_for_website")
