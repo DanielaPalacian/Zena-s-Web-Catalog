@@ -35,7 +35,7 @@ if zenas_list:
   for color_or_size in zenas_list:
     #ingredients_string += color_or_size + ' '
 
-    search_on=pd_df.loc[pd_df['COLOR_OR_STYLE'] == color_or_size, 'SEARCH_ON'].iloc[0]
+    search_on=pd_df.loc[pd_df['COLOR_OR_STYLE'] == color_or_size, 'COLOR_OR_STYLE'].iloc[0]
     st.write('The search value for ', color_or_size,' is ', search_on, '.')
 
     st.stop()
