@@ -20,7 +20,7 @@ option = st.selectbox('Pick a sweatsuit color or style:', pd_colors)
 product_caption = 'Our warm, comfortable, ' + option + ' sweatsuit!'
 
 # use the color selected to go back and get all the info from the database
-table_prod_data = session.sql("select file_name, price, size_list, upsell_product_desc, file_url from catalog_for_website where color_or_style = '" + option + "';")
+table_prod_data = session.sql("select file_name, price, size_list, upsell_product_desc, file_url from ZENAS_ATHLEISURE_DB.PRODUCTS.CATALOG_FOR_WEBSITE where color_or_style = '" + option + "';")
 pd_prod_data = table_prod_data.to_pandas() 
 
 # assign each column of the row returned to its own variable 
