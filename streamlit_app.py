@@ -2,62 +2,38 @@
 #Import python packages
 
 import streamlit as st 
-import pandas as pd
-import requests
+import streamlit as st
+from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
+import pandas as pd
 
-# Write directly to the app
-st.title(f" Zena's Amazing Athleisure Catalog ")
-# st.write(
-  # """Pick a sweatsuit color or style
-  # """
-# )
+st.title("Zena's Amazing Athleisure Catalog")
 
+session = get_active_session()
 
-cnx=st.connection("snowflake")
-session= cnx.session()
+# get a list of colors for a drop list selection
+table_colors = session.sql("select color_or_style from catalog_for_website")
+pd_colors = table_colors.to_pandas()
 
-my_dataframe = session.table("zenas_athleisure_db.products.catalog_for_website").select(col('COLOR_OR_STYLE'),col('price'), col('file_name'), col('file_url'), col('size_list'), col('upsell_product_desc'))
-zenas_list = st.multiselect('Pick a sweatsuit color or style'
-    ,my_dataframe
-    ,max_selections=1
-)
-#st.dataframe(data=my_dataframe, use_container_width=True)
-#st.stop()
+# Oyt the list of colors into a drop list selector 
+option = st.selectbox('Pick a sweatsuit color or style:', pd_colors)
 
-pd_df=my_dataframe.to_pandas()
-st.dataframe(pd_df)
+# We'll build the image caption now, since we can
+product_caption = 'Our warm, comfortable, ' + option + ' sweatsuit!'
 
-ingredients_string=''
+# use the color selected to go back and get all the info from the database
+table_prod_data = session.sql("select file_name, price, size_list, upsell_product_desc, file_url from catalog_for_website where color_or_style = '" + option + "';")
+pd_prod_data = table_prod_data.to_pandas() 
 
-if zenas_list:
-  
-  for color_or_size in zenas_list:
-    #ingredients_string += color_or_size + ' '
+# assign each column of the row returned to its own variable 
+price = '$' + str(pd_prod_data['PRICE'].iloc[0])+'0'
+file_name = pd_prod_data['FILE_NAME'].iloc[0]
+size_list = pd_prod_data['SIZE_LIST'].iloc[0]
+upsell = pd_prod_data['UPSELL_PRODUCT_DESC'].iloc[0]
+url = pd_prod_data['FILE_URL'].iloc[0]
 
-    search_on=pd_df.loc[pd_df['COLOR_OR_STYLE'] == color_or_size, 'COLOR_OR_STYLE'].iloc[0]
-    st.write('The search value for ', color_or_size,' is ', search_on, '.')
-
-    st.stop()
-    
-    st.subheader(color_or_size+'Information')
-    smoothiefroot_response = requests.get(f"https://www.smoothiefroot.com/api/fruit/{search_on}")
-    sf_df=st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
-
-st.write(ingredients_string)
-
-st.stop()
-
-name_on_order = title
-my_insert_stmt = """ insert into smoothies.public.orders(ingredients, name_on_order)
-                    values ('""" + ingredients_string + """','""" + name_on_order + """')"""
-
-
-
-st.write(my_insert_stmt)
-
-time_to_insert =st.button('Submit Order')
-
-if time_to_insert:
-    session.sql(my_insert_stmt).collect()
-    st.success('Your Smoothie is ordered, '+ name_on_order +'!', icon="✅")
+# display the info on the page
+st.image(image=url, width=400, caption=product_caption)
+st.markdown('**Price:** '+ price)
+st.markdown('**Sizes Available:** ' + size_list)
+st.markdown('**Also Consider:** ' + upsell)
